@@ -1,6 +1,6 @@
 # `notetaker(7)`
 
-Take and view notes across multiple machines.
+Edit notes using AsciiDoc, view as HTML in the browser.
 
 > [!IMPORTANT]
 > WIP

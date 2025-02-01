@@ -1,5 +1,4 @@
 = notetaker(7)
-Matthieu Monsch <mtth@apache.org>
 
 == Name
 

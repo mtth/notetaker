@@ -1,0 +1,27 @@
+{
+  "name": "notetaker-site",
+  "version": "0.0.0",
+  "private": true,
+  "repository": "github:mtth/notetaker",
+  "author": "Matthieu Monsch <mtth@apache.org>",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "clean": "rm -rf .next lib node_modules out",
+    "dev": "next",
+    "fix": "prettier --write",
+    "prepare": "pnpm run build",
+    "start": "next start",
+    "watch": "tsc -b -w ."
+  },
+  "dependencies": {
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^15.1.6",
+    "@types/react": "^19.0.8"
+  }
+}
