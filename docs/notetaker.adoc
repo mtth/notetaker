@@ -1,0 +1,108 @@
+= notetaker(7)
+Matthieu Monsch <mtth@apache.org>
+
+== Name
+
+notetaker - note taking utilities
+
+== Description
+
+=== Overview
+
+Edit notes using AsciiDoc, view as HTML in the browser.
+
+=== Server setup
+
+==== Nginx config
+
+To serve all notes as rendered HTML files, add the following configuration inside an `http` block (updating `server_name` appropriately):
+
+[source]
+----
+server {
+  listen 80;
+  server_name notes;
+  root /var/lib/notetaker;
+
+  location ~ \.adoc$ {
+    default_type "text/asciidoc";
+    try_files $uri =404;
+  }
+
+  location ~ \.html$ {
+    default_type "text/html";
+    alias /var/lib/notetaker/.html/adoc.html;
+  }
+
+  location ^~ /.html/ {
+    # Not internal to allow access to CSS and JS resources.
+    try_files $uri =404;
+  }
+
+  location / {
+    autoindex on;
+    autoindex_format json;
+    rewrite ^(.*)/autoindex\.json$ $1/ break;
+    rewrite ^(.*)/+$ $1/index.html last;
+    rewrite ^(.+)$ $1.html last;
+    return 404;
+  }
+}
+----
+
+==== NFS setup
+
+Follow the steps in the link:https://wiki.archlinux.org/title/NFS[Arch Wiki], binding `/var/lib/notetaker/` to `/srv/nfs/notes` for example.
+
+
+=== Client setup
+
+For viewing files, it is sufficient to mount the NFS folder.
+We recommend the `systemd` approach which auto-mounts on access.
+This also works around the issue of waiting for network dependencies (e.g. Tailscale) to be available before mounting, if done during boot.
+You can use the following files as starting point, activating the latter afterwards: `systemctl enable mnt-nfs.automount`.
+
+[source]
+----
+# /etc/systemd/system/mnt-nfs.mount
+[Unit]
+Description=Mount NFS
+After=nss-lookup.target
+
+[Mount]
+Type=nfs
+What=$hostname:/ # TODO: Update hostname
+Where=/mnt/nfs
+Options=vers=4
+TimeoutSec=10
+ForceUnmount=true
+
+[Install]
+WantedBy=multi-user.target
+----
+
+[source]
+----
+# /etc/systemd/system/mnt-nfs.automount
+[Unit]
+Description=Automount NFS
+
+[Automount]
+Where=/mnt/nfs
+
+[Install]
+WantedBy=multi-user.target
+----
+
+To create or edit notes, you'll need to create a matching `notetaker` group with GID 4810.
+You may need to log in again for this change to be picked up.
+
+[source]
+----
+groupadd -g 4810 -U "$USER" notetaker
+----
+
+
+== Related
+
+* https://gist.github.com/max-lt/76de5a9765fa713cc5a6e267914ebba6
