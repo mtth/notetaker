@@ -5,8 +5,7 @@ export default function Document(): ReactElement {
   return (
     <Html>
       <Head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
       </Head>
       <body>
         <Main />
